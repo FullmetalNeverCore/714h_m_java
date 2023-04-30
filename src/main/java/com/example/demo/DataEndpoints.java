@@ -125,4 +125,13 @@ public class DataEndpoints {
                 System.out.println("The type is not recognized.");                
         }
     }
+
+    @PostMapping("/chat_exchange")
+    public void getCE(@RequestBody Map<String, Object> data) {;}
+
+    @PostMapping("/img_link")
+    public void imgLK(@RequestBody Map<String, Object> data) {;}
+
+    @PostMapping("/nn_char")
+    public void nnCH(@RequestBody Map<String, Object> data) {;}  
 }
