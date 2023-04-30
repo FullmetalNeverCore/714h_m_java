@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.function.Function;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.*;
+import java.util.stream.Collectors;
 
 
 
@@ -40,12 +42,15 @@ public class DataEndpoints {
     private final VerifData verdata;
     private final Chatbuffer chatb;
     private final NNvals nnvals;
+    private Process proc;
+    private String os;
 
     @Autowired
     public DataEndpoints(VerifData verdata,Chatbuffer chatb,NNvals nnvals) {
         this.verdata = verdata;
         this.chatb = chatb;
         this.nnvals = nnvals;
+        this.os = System.getProperty("os.name").toLowerCase();
     }
 
 
@@ -125,9 +130,37 @@ public class DataEndpoints {
                 System.out.println("The type is not recognized.");                
         }
     }
-
+ 
     @PostMapping("/chat_exchange")
-    public void getCE(@RequestBody Map<String, Object> data) {;}
+    public void getCE(@RequestBody Map<String, Object> data) {
+        StringBuilder output = new StringBuilder();
+        LOGGER.info("INTERACTING WITH CHATBUFFER @chat_exchange");
+        String[] command;
+        if (this.os.contains("windows")) {
+            command = new String[] {"python","exect.py","0",(String) data.get("chat"),verdata.getChr(),nnvals.getRnd(),nnvals.getLen(),nnvals.getFpen(),nnvals.getPpen()};
+        } else {
+            command = new String[] {"sudo","python3","exect.py","0",(String) data.get("chat"),verdata.getChr(),nnvals.getRnd(),nnvals.getLen(),nnvals.getFpen(),nnvals.getPpen()};
+        }
+        try{
+            ProcessBuilder builder = new ProcessBuilder(command); 
+            Process proc = builder.start();
+            BufferedReader readr = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            BufferedReader errread = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+            String lines;
+            System.out.println("Java");
+            while((lines = readr.readLine())!=null){
+                output.append(lines);
+            }
+            while((lines = errread.readLine())!=null){
+                output.append(lines);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        chatb.setChat(output.toString().replace("\n", ""));
+        System.out.println(chatb.getChat());
+    }
 
     @PostMapping("/img_link")
     public void imgLK(@RequestBody Map<String, Object> data) {;}

@@ -37,7 +37,7 @@ public class config {
 
     @Bean
     public NNvals nnvals() {
-        return new NNvals("0","0","0","0");
+        return new NNvals("1.1","150","1.85","1.8");
     }
 
 }

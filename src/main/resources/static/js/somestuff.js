@@ -37,23 +37,6 @@ function verifyAccount(username, password, char) {
     });
   }
 
-function sendChat(type,data) {
-    console.log(type);
-    return $.ajax({
-      type: "POST",
-      url: '/chat_exchange',
-      data: {chat:data},
-    }).then(function(response) {
-      if(response !== "Not"){
-        return {status: true};
-      }
-      else{
-        return {status: false, value: response};
-      }
-    }).catch(function(error) {
-      return {status: false, error: error.status + ": " + error.statusText};
-    });
-  }
 
   function send(link) {
     return $.ajax({
@@ -116,7 +99,8 @@ function sendChat(type,data) {
     return $.ajax({
       type: "POST",
       url: '/chat_exchange',
-      data: {chat: text,type: engine},
+      data: JSON.stringify({"type":engine,"chat":text}),
+      contentType: "application/json"
     }).then(function(response) {
       if(response !== "Not"){
         return {status: true};

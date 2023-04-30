@@ -220,7 +220,7 @@
                     }
             })
             $('#inputext').submit(function(e){
-                e.preventdefault()
+                e.preventDefault()
                 getTextExchange($('#textitself').val(),$('#engine').val())
                 .then((promRes) => {
                     if (promRes.status) {
@@ -288,18 +288,13 @@
           }
           function updateMessageBox(){
             console.log('updating msgbox');
-            messageBuffer()
+            messageBuffer() 
             .then((prom) => {
                 if (prom.status) {
                         console.log('success');
                         console.log(prom.value['text']);
                         var curnt_val = "";
-                        for(let i = 0;i<Object.keys(prom.value['text']).length;i++){
-                            console.log(prom.value['text'][i]);
-                            var curnt_val = curnt_val +'\n'+prom.value['text'][i];
-                            $('#updtbrain').val(curnt_val);
-                            console.log('rdy');
-                        }
+                        $('#updtbrain').val(prom.value['text']);
                 } else {
                         console.log('err')
                     }                 
